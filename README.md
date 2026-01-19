@@ -1,186 +1,58 @@
-# DecisionTrace: An AI Decision Audit Log
+# DecisionTrace
 
-(Project name: DecisionTrace)
+**DecisionTrace is a simple, powerful tool for creating an audit trail of your AI's decisions. Think of it as a flight data recorder for your AI.**
 
-This is not logging. This is post-hoc accountability for AI decisions.
+It ensures that every important decision your AI makes is logged in a secure, tamper-evident way, so you can always go back and understand *why* a decision was made.
 
-## 0️⃣ Reality You Need to Accept
+## Features
 
-Right now, most AI systems:
+-   **Append-Only Log:** Creates a secure, unchangeable log of AI decisions.
+-   **Integrity Chain:** Uses a hash chain (like a lightweight blockchain) to prevent tampering and guarantee the chronological order of decisions.
+-   **Replay Capability:** Easily "replay" any past decision to see the full context: the prompt, the model used, the output, and more.
+-   **Verification:** A simple command to verify the entire log's integrity and detect any corruption or tampering.
 
-- Make decisions
-- Affect users
-- Influence outcomes
+## Quick Start
 
-…and cannot explain yesterday’s decision.
+### 1. Installation
 
-That’s unacceptable. And regulation is coming whether people like it or not.
+First, clone the repository. Then, navigate into the `decisiontrace` directory and install the tool:
 
-## 1️⃣ The Exact Problem You’re Solving
-
-“When an AI system makes a decision, can we later reconstruct how and why it happened?”
-
-Not:
-
-- “What was the output?”
-- “What model did we use?”
-
-But:
-
-- What inputs influenced it
-- What context was used
-- What assumptions were made
-- What version of the system was running
-
-This is the difference between toy AI and deployable AI.
-
-## 2️⃣ What You Are NOT Building
-
-Be strict.
-
-- ❌ Chat history viewer
-- ❌ Analytics dashboard
-- ❌ Model monitoring UI
-- ❌ Ethics essay
-
-If you drift into those, you have failed.
-
-## 3️⃣ What You ARE Building
-
-An append-only decision audit layer that records:
-
-- **Prompt**: The input that triggered the decision.
-- **Context Sources**: A list of data/document sources the AI used.
-- **Model + Config**: The exact model and its settings (e.g., temperature).
-- **Output**: The result of the decision.
-- **Confidence / Risk Tags**: Metadata about the output's reliability.
-- **Timestamp**: When the decision was made.
-- **Integrity Hash**: A cryptographic hash to ensure the record is tamper-evident.
-
-Think: **Git commit history for AI decisions.**
-
-## 4️⃣ Minimal but Serious Architecture
-```
-decisiontrace/
-│
-├── logger.py        # Append-only decision logger
-├── hasher.py        # Integrity & chaining
-├── schema.py        # Decision record Pydantic schema
-├── replay.py        # Reconstruct a decision
-├── cli.py           # Command-Line Interface
-├── logs/            # Directory for log files
-│   └── .gitkeep
-├── requirements.txt
-└── README.md
-```
-
-If this looks “simple”, good. Simple + correct beats clever.
-
-## 5️⃣ Decision Record Schema (Non-Negotiable)
-
-Every decision **must** log this structure, enforced by `schema.py`:
-
-```json
-{
-  "decision_id": "uuid",
-  "timestamp": "ISO-8601",
-  "model": "llama3.2:1b",
-  "config": {
-    "temperature": 0.7
-  },
-  "prompt": "...",
-  "context_sources": [
-    "policy_v3.txt",
-    "user_input"
-  ],
-  "output": "...",
-  "confidence": 0.62,
-  "risk_flags": ["hallucination_risk"],
-  "prev_hash": "abc123...",
-  "hash": "def456..."
-}
-```
-
-If anything here is missing, it’s not auditable.
-
-## 6️⃣ Integrity Chain (This Is the Differentiator)
-
-Each record:
-
-1.  Hashes its own contents.
-2.  Includes the hash of the **previous** record.
-
-This creates a cryptographic chain, providing:
-
--   **Tamper Evidence**: If a record is altered, its hash will no longer match the `prev_hash` of the next record.
--   **Chronological Integrity**: The order of decisions is locked in.
-
-You’re not building blockchain. You’re building basic honesty guarantees.
-
-## 7️⃣ Replay Capability (Critical)
-
-An auditor must be able to run a command to see the full context of any decision.
-
-**If an AI decision can’t be reconstructed, it can’t be defended.**
-
-## 8️⃣ How to Use
-
-### Installation
-
-Clone the repository and install it in editable mode with the required dependencies:
 ```bash
+# Install the package in editable mode
 pip install -e .
 ```
-This will install the `decisiontrace` command in your environment.
+This adds the `decisiontrace` command to your system.
 
-### 1. Log a Decision
+### 2. How to Use
 
-Create a JSON file (e.g., `decision.json`) with the details of the AI's action:
-
+#### Log a Decision
+Create a `.json` file (e.g., `my_decision.json`) with your AI's decision details:
 ```json
 {
   "model": "llama3.2:1b-instruct",
-  "config": {
-    "temperature": 0.7,
-    "max_tokens": 1024
-  },
-  "prompt": "Should we approve a loan for user_id 12345?",
-  "context_sources": [
-    "internal_policy_v4.1.pdf",
-    "user_credit_report_-345.json"
-  ],
-  "output": "Approval recommended based on high credit score and low debt-to-income ratio.",
+  "config": { "temperature": 0.7 },
+  "prompt": "Should we approve this loan?",
+  "context_sources": ["policy_v4.pdf", "user_credit_report.json"],
+  "output": "Approval recommended based on high credit score.",
   "confidence": 0.95,
   "risk_flags": ["user_pii_involved"]
 }
 ```
-
-Now, log it using the CLI:
-
+Then, log it:
 ```bash
-decisiontrace log decision.json
+decisiontrace log my_decision.json
 ```
-Output:
-```
-Decision successfully logged.
-  Decision ID: <some-uuid>
-  Record Hash: <sha256-hash>
-```
-This appends the decision to `logs/decision_log.jsonl`, securely chained to the previous entry.
 
-### 2. Replay (Audit) a Decision
-
-Use the `decision_id` from the log output to replay it:
-
+#### Replay a Decision
+Use the `decision_id` from the log output to see the full details of a past decision:
 ```bash
-decisiontrace replay <decision_id>
+decisiontrace replay <your-decision-id>
 ```
 
-### 3. Verify the Entire Log
-
-To check the integrity of the entire log file for tampering:
-
+#### Verify the Log
+Check the entire history for tampering:
 ```bash
 decisiontrace verify
 ```
-The tool will display a success message or a critical error if the chain is broken.
+
+That's it! You now have a secure, auditable log of your AI's decisions.
